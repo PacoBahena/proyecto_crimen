@@ -1,6 +1,7 @@
 
 library(shiny)
 library(shinydashboard)
+#source('globals.R')
 
 header <- dashboardHeader(title = "Crime dashboard")
 
@@ -9,10 +10,23 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem("Tendencia", tabName = "evolucion", icon = icon("line-chart")),
     menuItem("Asesinatos", tabName = "asesinos", icon = icon("map-o")),
-    dateRangeInput("dates", h3("Date range")),
-    selectInput("select", h3("Select box"), 
-                choices = list("Choice 1" = 1, "Choice 2" = 2,
-                               "Choice 3" = 3), selected = 1)
+    dateRangeInput("dates",start ='2013-01-01',end='2014-01-01',h3("Date range")),
+    selectInput("crimen", h3("Delito"), 
+                choices = list(
+                          "VIOLACION" = "VIOLACION", 
+                          "ROBO A NEGOCIO." = "ROBO A NEGOCIO.",
+                          "ROBO DE VEHICULO AUTOMOTOR." = "ROBO DE VEHICULO AUTOMOTOR.",
+                          "ROBO A TRANSEUNTE." = "ROBO A TRANSEUNTE.",
+                          "LESIONES POR ARMA DE FUEGO" = "LESIONES POR ARMA DE FUEGO",
+                          "HOMICIDIO DOLOSO" = "HOMICIDIO DOLOSO",
+                          "ROBO A REPARTIDOR." = "ROBO A REPARTIDOR.",
+                          "ROBO A CUENTAHABIENTE." = "ROBO A CUENTAHABIENTE.",
+                          "ROBO A BORDO DE TAXI." = "ROBO A BORDO DE TAXI.",
+                          "ROBO A BORDO DE MICROBUS." = "ROBO A BORDO DE MICROBUS.",
+                          "ROBO A TRANSPORTISTA." = "ROBO A TRANSPORTISTA.",
+                          "ROBO A CASA HABITACION." = "ROBO A CASA HABITACION.",
+                          "ROBO A BORDO DE METRO." = "ROBO A BORDO DE METRO.",
+                          "todos" = "todos"), selected = "todos")
   )
 )
 
@@ -32,6 +46,7 @@ body <- dashboardBody(
                 collapsible = TRUE,
                 width = 6,
                 plotlyOutput("crimen_mensual")
+                
               )
             )
     ),

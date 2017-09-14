@@ -32,23 +32,19 @@ if(!require(plotly)){
 }
 
 #####Leer bases 
+temp <- tempfile()
+download.file("https://data.diegovalle.net/hoyodecrimen/cuadrantes.csv.zip",temp)
+crime_points <- read.csv(unz(temp, "clean-data/crime-lat-long.csv"),stringsAsFactors = FALSE)
 
-# temp <- tempfile()
-# download.file("https://data.diegovalle.net/hoyodecrimen/cuadrantes.csv.zip",temp)
-data <- read.csv(unz(temp, "clean-data/crime-lat-long.csv"))
-
-crime_stats <- crime_points %>% 
+crime_points <- crime_points %>% 
   mutate( crime = gsub(' S.V','',crime)) %>%
-  mutate( crime = gsub(' C.V','',crime)) %>%
-  mutate(month = month(date, label=TRUE, abbr=TRUE), year = year(date)) %>%
-  group_by(month,year,crime) %>% 
-  summarise(frecuencia = n()) %>% 
-  group_by(month,crime) %>%
-  summarise( average = mean(frecuencia))
-
-crimenes_violentos <- data %>% filter( crime %in% c('VIOLACION','HOMICIDIO DOLOSO'), !is.na(lat), !is.na(long))
+  mutate( crime = gsub(' C.V','',crime)) 
 
 
+
+ggplot(data=crime_stats, aes(x=month, y=average, group=crime)) +
+  geom_point( aes(color = crime), size=1.2) + geom_line( aes( color = crime)) +
+  theme(legend.position="none")
 
 
 

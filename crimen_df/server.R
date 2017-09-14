@@ -13,14 +13,41 @@ source('globals.R')
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
    
+ 
   output$crimen_mensual <- renderPlotly({ 
-    ggplot(data=crime_stats, aes(x=month, y=average, group=crime)) +
-          geom_point( aes(color = crime), size=1.2) + geom_line( aes( color = crime)) +
-          theme(legend.position="none")
+    
       
+    if (input$crimen != 'todos') {
+       crime_points <- crime_points %>% filter(crime == input$crimen)
+     }
+    
+    crime_stats <- crime_points %>% filter(date > input$dates[1], date < input$dates[2]) %>%
+                      mutate(month = month(date, label=TRUE, abbr=TRUE), year = year(date)) %>%
+                      group_by(month,year,crime) %>% 
+                      summarise(frecuencia = n()) %>% 
+                      group_by(month,crime) %>%
+                      summarise( average = mean(frecuencia))
+    
+    ggplot(crime_stats, aes(month,average)) + geom_bar(aes(fill=crime),stat="identity",width = 0.5)+ 
+      theme(legend.position="none") + xlab('Mes') + ylab('Promedio anual Delitos')+ ggtitle('Promedio Delitos Mensual')
+        
   })
   
+  
+  
   output$crimenes_violentos <- renderLeaflet({
+    
+    if( input$crimen != 'todos'){
+    
+    crimenes_violentos <- crime_points %>% 
+                            filter(date > input$dates[1], date < input$dates[2], crime == input$crimen)
+    } else {
+      
+      crimenes_violentos <- crime_points %>% 
+        filter(date > input$dates[1], date < input$dates[2])
+    }                         
+                
+    
     
     m2 <- leaflet(data=crimenes_violentos) %>% 
       addProviderTiles('CartoDB.Positron')%>% 
@@ -28,7 +55,7 @@ shinyServer(function(input, output) {
       #                  radius = 1,
       #                  stroke=FALSE, color = ~crime,fillOpacity = .8) 
       addMarkers(~long,~lat,
-        clusterOptions = markerClusterOptions())
+        clusterOptions = markerClusterOptions(),  popup= ~crime)
     m2
     
   })

@@ -20,23 +20,15 @@ crime_stats <- crime_points %>%
                   mutate(month = month(date, label=TRUE, abbr=TRUE), year = year(date)) %>%
                     group_by(month,year,crime) %>% 
                       summarise(frecuencia = n()) %>% 
-                        group_by(month) %>%
+                        group_by(month,crime) %>%
                           summarise( average = round(mean(frecuencia)))
 
 
 
-ggplot(data=crime_stats, aes(x=month, y=freq, group=crime)) +
-  geom_point( aes( color = crime), size=1.2) + geom_line( aes( color = crime))
+p <- ggplot(crime_stats, aes(month,average)) + geom_bar(aes(fill=crime),stat="identity")+ 
+    theme(legend.position="none") + xlab('Mes') + ylab('Promedio anual Delitos')+ ggtitle('Promedio Delitos Mensual')
+p <- ggplotly(p)
 
 
 
-crime_m <- crime_stats %>% group_by(month) %>% summarise( freq = sum(frecuencia))
-
-crime_m <- crime_m %>% ungroup()
-
-crime_stats %>% group_by(month) %>% summarise( freq = sum(frecuencia))
   
-  xlab("muestra") + ylab("error prueba") +
-  ggtitle("Simulación error de prueba") + theme(axis.text.x=element_text(angle = -90, hjust = 0))
-
-

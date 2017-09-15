@@ -31,6 +31,11 @@ if(!require(plotly)){
   library(plotly)
 }
 
+if(!require(leaflet.extras)){
+  install.packages("leaflet.extras")
+  library(leaflet.extras)
+}
+
 #####Leer bases 
 temp <- tempfile()
 download.file("https://data.diegovalle.net/hoyodecrimen/cuadrantes.csv.zip",temp)
